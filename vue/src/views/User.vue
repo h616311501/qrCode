@@ -4,28 +4,37 @@
 
         </div>
         <div style="margin: 10px 0">
-            <el-input style="width: 200px " suffix-icon="el-icon-search" placeholder="请输入名称" v-model="username"></el-input>
-            <el-input style="width: 200px " suffix-icon="el-icon-message" placeholder="请输入邮箱" class="ml-5" v-model="email"></el-input>
-            <el-input style="width: 200px " suffix-icon="el-icon-position" placeholder="请输入地址" class="ml-5" v-model="address"></el-input>
-            <el-button class="ml-5" type="primary" round @click="load">搜索</el-button>
-            <el-button type="warning" round @click="reset">重置</el-button>
+<!--            请输入名称-->
+            <el-input style="width: 200px " suffix-icon="el-icon-search" placeholder="이름을 입력하세요" v-model="username"></el-input>
+
+            <el-input style="width: 200px " suffix-icon="el-icon-message" placeholder="우편함을 입력하세요" class="ml-5" v-model="email"></el-input>
+
+            <el-input style="width: 200px " suffix-icon="el-icon-position" placeholder="주소를 입력하세요" class="ml-5" v-model="address"></el-input>
+                <!--            搜索-->
+            <el-button class="ml-5" type="primary" round @click="load">Search</el-button>
+                <!--            重置-->
+            <el-button type="warning" round @click="reset">Reset</el-button>
         </div>
 
         <div style="margin: 10px 0">
-            <el-button type="primary" round @click="handleAdd">添加<i class="el-icon-circle-plus-outline"></i></el-button>
+<!--            添加-->
+            <el-button type="primary" round @click="handleAdd">Add<i class="el-icon-circle-plus-outline"></i></el-button>
             <el-popconfirm
                     class="ml-5"
-                    confirm-button-text='确定'
-                    cancel-button-text='取消'
+                    confirm-button-text='Yes'
+                    cancel-button-text='No'
                     icon="el-icon-info"
                     icon-color="red"
-                    title="确定批量删除吗？"
+                    title="확인？"
                     @contextmenu="delBatch"
             >
-                <el-button type="danger" round slot="reference">批量删除<i class="el-icon-remove-outline"></i></el-button>
+                <el-button type="danger" round slot="reference">대량삭제<i class="el-icon-remove-outline"></i></el-button>
             </el-popconfirm>
-            <el-button type="primary" round class="ml-5">导入<i class="el-icon-bottom"></i></el-button>
-            <el-button type="primary" round class="ml-5">导出<i class="el-icon-top"></i></el-button>
+<!--            //导入与导出-->
+            <el-upload action="http://localhost:9091/user/import" style="display: inline-block" :show-file-list="false" accept="xlsx" on-success="handleExcelImportSuccess">
+            <el-button type="primary" round class="ml-5">Import<i class="el-icon-bottom"></i></el-button>
+            </el-upload>
+            <el-button type="primary" round class="ml-5" @click="exp">Export<i class="el-icon-top"></i></el-button>
         </div>
 
 
@@ -66,29 +75,29 @@
                     :total="total">
             </el-pagination>
         </div>
-
-        <el-dialog title="用户信息" :visible.sync="dialogFormVisible" width="30%">
+<!--        User Info-->
+        <el-dialog title="User Info" :visible.sync="dialogFormVisible" width="30%">
             <el-form labal-width="80px" size="small">
-                <el-form-item label="用户名" >
+                <el-form-item label="아이디" >
                     <el-input v-model="form.username" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="昵称" >
+                <el-form-item label="이름" >
                     <el-input v-model="form.nickname" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" >
+                <el-form-item label="우편함" >
                     <el-input v-model="form.email" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" >
+                <el-form-item label="전화번호" >
                     <el-input v-model="form.phone" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="地址" >
+                <el-form-item label="주소" >
                     <el-input v-model="form.address" autocomplete="off"></el-input>
                 </el-form-item>
 
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
-                <el-button type="primary" @click="save">确 定</el-button>
+                <el-button @click="dialogFormVisible = false">취 소</el-button>
+                <el-button type="primary" @click="save">확 인</el-button>
             </div>
         </el-dialog>
     </div>
@@ -102,7 +111,7 @@
                 tableData: [],
                 total:0,
                 pageNum:1,
-                pageSize:2,
+                pageSize:10,
                 username: "",
                 email: "",
                 address: "",
@@ -133,11 +142,11 @@
             save(){
                 this.request.post("/user", this.form).then(res => {
                     if(res){
-                        this.$message.success("保存成功")
+                        this.$message.success("저장 성공")//保存成功
                         this.dialogFormVisible = false
                         this.load()
                     } else {
-                        this.$message.error("保存失败")
+                        this.$message.error("저장 실패")//保存失败
                     }
                 })
             },
@@ -152,10 +161,10 @@
             handleDelete(id){
                 this.request.delete("/user/"+ id).then(res => {
                     if(res){
-                        this.$message.success("删除成功")
+                        this.$message.success("삭제 성공")//删除成功
                         this.load()
                     } else {
-                        this.$message.error("删除失败")
+                        this.$message.error("삭제 실패")//删除失败
                     }
                 })
             },
@@ -167,10 +176,10 @@
                 let ids = this.multipleSelection.map(v => v.id)
                 this.request.post("/user/del/batch", ids).then(res => {
                     if(res){
-                        this.$message.success("批量删除成功")
+                        this.$message.success("대량삭제 성공")//批量删除成功
                         this.load()
                     } else {
-                        this.$message.error("批量删除失败")
+                        this.$message.error("대량삭제 실패")//批量删除失败
                     }
                 })
             },
@@ -187,7 +196,15 @@
             handleCurrentChange(pageNum){
                 this.pageNum = pageNum
                 this.load()
+            },
+            exp(){
+                window.open("hhtp://localhost:9091/user/export")
+            },
+            handleExcelImportSuccess(){
+                this.$message.success("Import 성공")//导入成功
+                this.load()
             }
+
         }
     }
 </script>
