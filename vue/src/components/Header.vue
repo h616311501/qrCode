@@ -3,17 +3,18 @@
         <div style="flex:1;">
             <span :class="collapseBtnClass" style="cursor: pointer; font-size:18px" @click="collapse"></span>
             <el-breadcrumb separator="/" style="display: inline-block; margin-left: 10px;">
-                <el-breadcrumb-item :to="item.path " v-for="item in paths">{{ item.name }}</el-breadcrumb-item>
-                <el-breadcrumb-item><a href="/">用户管理</a></el-breadcrumb-item>
+                <el-breadcrumb-item :to="'/'">首页</el-breadcrumb-item>
+                <el-breadcrumb-item>用户管理</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
 
         <el-dropdown style="width: 70px;cursor: pointer">
-            <span>王小虎</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
-            <el-dropdown-menu slot="dropdown">
+            <img :src="user.avatarUrl" alt="" style="width: 30px;border-radius: 50%; position: relative;top: 10px;right: 5px">
+            <span>{{user.nickname}}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
+            <el-dropdown-menu slot="dropdown" style="width: 100px;text-align: center">
                 <el-dropdown-item style="font-size: 14px;padding: 5px 0">个人信息</el-dropdown-item>
                 <el-dropdown-item style="font-size: 14px;padding: 5px 0">
-                    <router-link to="/login" style="text-decoration: none">退出</router-link></el-dropdown-item>
+                    <span style="text-decoration: none" @click="logout">退出</span></el-dropdown-item>
             </el-dropdown-menu>
         </el-dropdown>
 
@@ -24,14 +25,24 @@
     export default {
         name: "Header",
         props:{
-            collapseBtnClass:String,
-            collapse:Boolean,
+            collapseBtnClass:String
         },
         data(){
             return {
-                paths: []
+                user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}
+            }
+        },
+        methods:{
+            collapse(){
+                this.$emit("asideCollapse")
+            },
+            logout(){
+                this.$router.push("/login")
+                localStorage.removeItem("user")
+                this.$message.success("退出成功")
             }
         }
+
     }
 </script>
 

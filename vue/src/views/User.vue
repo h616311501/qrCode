@@ -134,22 +134,22 @@
                         address: this.address,
                     }
                 }).then(res =>{
-                    console.log(res)
-                    this.tableData = res.records
-                    this.total = res.total
+                    console.log(res.data)
+                    this.tableData = res.data.records
+                    this.total = res.data.total
                 })
             },
-            save(){
-                this.request.post("/user", this.form).then(res => {
-                    if(res){
-                        this.$message.success("저장 성공")//保存成功
-                        this.dialogFormVisible = false
-                        this.load()
-                    } else {
-                        this.$message.error("저장 실패")//保存失败
-                    }
-                })
-            },
+                save(){
+                    this.request.post("/user", this.form).then(res => {
+                        if(res.data){
+                            this.$message.success("저장 성공")//保存成功
+                            this.dialogFormVisible = false
+                            this.load()
+                        } else {
+                            this.$message.error("저장 실패")//保存失败
+                        }
+                    })
+                },
             handleAdd(){
                 this.dialogFormVisible = true
                 this.form = {}
@@ -160,7 +160,7 @@
             },
             handleDelete(id){
                 this.request.delete("/user/"+ id).then(res => {
-                    if(res){
+                    if(res.data){
                         this.$message.success("삭제 성공")//删除成功
                         this.load()
                     } else {
@@ -175,7 +175,7 @@
             delBatch(){
                 let ids = this.multipleSelection.map(v => v.id)
                 this.request.post("/user/del/batch", ids).then(res => {
-                    if(res){
+                    if(res.data){
                         this.$message.success("대량삭제 성공")//批量删除成功
                         this.load()
                     } else {

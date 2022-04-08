@@ -12,11 +12,12 @@
             <img src="../assets/logo.png" alt="" style="width: 20px; position: relative; top: 5px; right: 5px">
             <b style="color: silver" v-show="logoTextshow">后台管理系统</b>
         </div>
-        <el-menu-item index="/">
+        <el-menu-item index="/home">
             <template slot="title">
             <i class="el-icon-house"></i>
             <span slot="title">主页</span>
         </template>
+
         </el-menu-item>
         <el-submenu index="2">
             <template slot="title">
@@ -25,7 +26,8 @@
             </template>
 
                 <el-menu-item index="/user">
-                    <i class="el-icon-s-custom"></i>用户管理</el-menu-item>
+                    <i class="el-icon-s-custom">
+                    </i>用户管理</el-menu-item>
 
         </el-submenu>
 
